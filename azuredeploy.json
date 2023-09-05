@@ -105,14 +105,9 @@
       "name": "[parameters('openAIName')]",
       "location": "[parameters('location')]",
       "sku": {
-        "name": "S0"
+        "name": "S"
       },
-      "kind": "TextAnalytics",
-      "properties": {
-        "apiProperties": {
-          "statisticsEnabled": false
-        }
-      }
+      "kind": "TextAnalytics"
     }
   ]
 }
