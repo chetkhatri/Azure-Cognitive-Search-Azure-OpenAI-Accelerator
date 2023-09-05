@@ -7,5 +7,112 @@
       "version": "0.20.4.51522",
       "templateHash": "17027619221182957879"
     }
-  }
+  },
+  "parameters": {
+    "cosmosDBAccountName": {
+      "type": "string",
+      "defaultValue": "[format('cosmosdb-account-{0}', uniqueString(resourceGroup().id))]",
+      "metadata": {
+        "description": "Optional. Cosmos DB account name, max length 44 characters, lowercase"
+      }
+    },
+    "cosmosDBDatabaseName": {
+      "type": "string",
+      "defaultValue": "[format('cosmosdb-db-{0}', uniqueString(resourceGroup().id))]",
+      "metadata": {
+        "description": "Optional. The name for the CosmosDB database"
+      }
+    },
+    "cosmosDBContainerName": {
+      "type": "string",
+      "defaultValue": "[format('cosmosdb-container-{0}', uniqueString(resourceGroup().id))]",
+      "metadata": {
+        "description": "Optional. The name for the CosmosDB database container"
+      }
+    },
+    "openAIName": {
+      "type": "string",
+      "defaultValue": "[format('openai-service-{0}', uniqueString(resourceGroup().id))]",
+      "metadata": {
+        "description": "Optional. The name of the OpenAI service"
+      }
+    },
+    "location": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]",
+      "metadata": {
+        "description": "Optional, defaults to resource group location. The location of the resources."
+      }
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.DocumentDB/databaseAccounts",
+      "apiVersion": "2023-04-15",
+      "name": "[parameters('cosmosDBAccountName')]",
+      "location": "[parameters('location')]",
+      "kind": "GlobalDocumentDB",
+      "properties": {
+        "databaseAccountOfferType": "Standard",
+        "locations": [
+          {
+            "locationName": "[parameters('location')]"
+          }
+        ],
+        "enableFreeTier": false,
+        "isVirtualNetworkFilterEnabled": false,
+        "publicNetworkAccess": "Enabled",
+        "capabilities": [
+          {
+            "name": "EnableServerless"
+          }
+        ]
+      }
+    },
+    {
+      "type": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases",
+      "apiVersion": "2023-04-15",
+      "name": "[format('{0}/{1}', parameters('cosmosDBAccountName'), parameters('cosmosDBDatabaseName'))]",
+      "location": "[parameters('location')]",
+      "properties": {
+        "resource": {
+          "id": "[parameters('cosmosDBDatabaseName')]"
+        }
+      }
+    },
+    {
+      "type": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers",
+      "apiVersion": "2023-04-15",
+      "name": "[format('{0}/{1}/{2}', parameters('cosmosDBAccountName'), parameters('cosmosDBDatabaseName'), parameters('cosmosDBContainerName'))]",
+      "location": "[parameters('location')]",
+      "properties": {
+        "resource": {
+          "id": "[parameters('cosmosDBContainerName')]",
+          "partitionKey": {
+            "paths": [
+              "/user_id"
+            ],
+            "kind": "Hash",
+            "version": 2
+          },
+          "defaultTtl": 1000
+        }
+      }
+    },
+    {
+      "type": "Microsoft.CognitiveServices/accounts",
+      "apiVersion": "2023-05-01",
+      "name": "[parameters('openAIName')]",
+      "location": "[parameters('location')]",
+      "sku": {
+        "name": "S0"
+      },
+      "kind": "TextAnalytics",
+      "properties": {
+        "apiProperties": {
+          "statisticsEnabled": false
+        }
+      }
+    }
+  ]
 }
