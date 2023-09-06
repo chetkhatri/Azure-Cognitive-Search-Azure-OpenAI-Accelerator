@@ -11,21 +11,21 @@
   "parameters": {
     "cosmosDBAccountName": {
       "type": "string",
-      "defaultValue": "[format('cosmosdb-account-{0}', uniqueString(resourceGroup().id))]",
+      "defaultValue": "[format('cosmosdb-account-hr-bot-{0}', uniqueString(resourceGroup().id))]",
       "metadata": {
         "description": "Optional. Cosmos DB account name, max length 44 characters, lowercase"
       }
     },
     "cosmosDBDatabaseName": {
       "type": "string",
-      "defaultValue": "[format('cosmosdb-db-{0}', uniqueString(resourceGroup().id))]",
+      "defaultValue": "[format('cosmosdb-db-hr-bot-{0}', uniqueString(resourceGroup().id))]",
       "metadata": {
         "description": "Optional. The name for the CosmosDB database"
       }
     },
     "cosmosDBContainerName": {
       "type": "string",
-      "defaultValue": "[format('cosmosdb-container-{0}', uniqueString(resourceGroup().id))]",
+      "defaultValue": "[format('cosmosdb-container-hr-bot-{0}', uniqueString(resourceGroup().id))]",
       "metadata": {
         "description": "Optional. The name for the CosmosDB database container"
       }
