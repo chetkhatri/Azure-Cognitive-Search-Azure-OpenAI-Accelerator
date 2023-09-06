@@ -30,13 +30,6 @@
         "description": "Optional. The name for the CosmosDB database container"
       }
     },
-    "openAIName": {
-      "type": "string",
-      "defaultValue": "[format('openai-service-{0}', uniqueString(resourceGroup().id))]",
-      "metadata": {
-        "description": "Optional. The name of the OpenAI service"
-      }
-    },
     "location": {
       "type": "string",
       "defaultValue": "[resourceGroup().location]",
@@ -78,7 +71,10 @@
         "resource": {
           "id": "[parameters('cosmosDBDatabaseName')]"
         }
-      }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.DocumentDB/databaseAccounts', parameters('cosmosDBAccountName'))]"
+      ]
     },
     {
       "type": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers",
@@ -97,17 +93,10 @@
           },
           "defaultTtl": 1000
         }
-      }
-    },
-    {
-      "type": "Microsoft.CognitiveServices/accounts",
-      "apiVersion": "2023-05-01",
-      "name": "[parameters('openAIName')]",
-      "location": "[parameters('location')]",
-      "sku": {
-        "name": "S"
       },
-      "kind": "TextAnalytics"
+      "dependsOn": [
+        "[resourceId('Microsoft.DocumentDB/databaseAccounts/sqlDatabases', parameters('cosmosDBAccountName'), parameters('cosmosDBDatabaseName'))]"
+      ]
     }
   ]
 }
